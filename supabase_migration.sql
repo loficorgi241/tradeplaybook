@@ -54,29 +54,39 @@ alter table public.profiles enable row level security;
 alter table public.trades enable row level security;
 
 -- profiles policies
-create policy if not exists "profiles_select_own"
-on public.profiles for select
-using (id = auth.uid());
+-- Supabase/Postgres versions may not support `create policy if not exists`.
+-- Use DROP POLICY + CREATE POLICY instead.
 
-create policy if not exists "profiles_update_own"
-on public.profiles for update
-using (id = auth.uid())
-with check (id = auth.uid());
+-- profiles policies
+DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
+CREATE POLICY "profiles_select_own"
+ON public.profiles FOR SELECT
+USING (id = auth.uid());
+
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
+CREATE POLICY "profiles_update_own"
+ON public.profiles FOR UPDATE
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
 
 -- trades policies
-create policy if not exists "trades_select_own"
-on public.trades for select
-using (user_id = auth.uid());
+DROP POLICY IF EXISTS "trades_select_own" ON public.trades;
+CREATE POLICY "trades_select_own"
+ON public.trades FOR SELECT
+USING (user_id = auth.uid());
 
-create policy if not exists "trades_insert_own"
-on public.trades for insert
-with check (user_id = auth.uid());
+DROP POLICY IF EXISTS "trades_insert_own" ON public.trades;
+CREATE POLICY "trades_insert_own"
+ON public.trades FOR INSERT
+WITH CHECK (user_id = auth.uid());
 
-create policy if not exists "trades_update_own"
-on public.trades for update
-using (user_id = auth.uid())
-with check (user_id = auth.uid());
+DROP POLICY IF EXISTS "trades_update_own" ON public.trades;
+CREATE POLICY "trades_update_own"
+ON public.trades FOR UPDATE
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
 
-create policy if not exists "trades_delete_own"
-on public.trades for delete
-using (user_id = auth.uid());
+DROP POLICY IF EXISTS "trades_delete_own" ON public.trades;
+CREATE POLICY "trades_delete_own"
+ON public.trades FOR DELETE
+USING (user_id = auth.uid());
